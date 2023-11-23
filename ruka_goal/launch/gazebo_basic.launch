@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <!-- Start gazebo simulator -->
+  <include file="$(find ruka_goal)/launch/dobot_world.launch" />
+
+  <!-- Run controllers -->
+  <include file="$(find ruka_goal)/launch/dobot_gazebo_controllers.launch" />
+
+</launch>
+
+<!-- toto musis spravit sam asik-->
