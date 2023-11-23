@@ -47,13 +47,10 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-add_executable(posli_ruku_niekde /home/alex/catkin_ws/src/ruka_goal/scripts/posli_ruku_niekde.cpp)
-target_link_libraries(posli_ruku_niekde ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-
+add_executable(posli_ruku_niekde /home/alex/catkin_ws/src/ruka_goal/src/posli_ruku_niekde.cpp)
 
 #add_library(posli_ruku_niekde_lib src/scripts/posli_ruku_niekde.cpp)
 #target_link_libraries(posli_ruku_niekde_lib ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-
 
 #target_link_libraries(posli_ruku_niekde_node posli_ruku_niekde_lib ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
