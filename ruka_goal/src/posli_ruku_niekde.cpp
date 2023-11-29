@@ -30,7 +30,8 @@ int main(int argc, char** argv)
 
   // Define the target pose (move up by 10 cm)
   geometry_msgs::Pose target_pose = move_group_interface.getCurrentPose().pose;
-  target_pose.position.z -= 0.1;  // move up by 10 cm
+  target_pose.position.z -= 0.05;  // move up by 10 cm
+  //target_pose.position.y -= 0.1; 
 
   // Set the target pose
   move_group_interface.setPoseTarget(target_pose);

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ruka_description</name>
+  <version>0.0.0</version>
+  <description>The ruka_description package</description>
+
+  <author>Your Name</author>
+  <maintainer email="your_email@example.com">Your Name</maintainer>
+  <license>BSD-3-Clause</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roslaunch</depend>
+  <depend>rviz</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>robot_description</depend>
+  <depend>gazebo</depend>
+  
+  <export>
+    <architecture_independent />
+    <!-- Add additional exports if needed -->
+  </export>
+</package>

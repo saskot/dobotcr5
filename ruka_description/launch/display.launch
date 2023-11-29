@@ -1,0 +1,10 @@
+<launch>
+    <!-- Use xacro to generate URDF from Xacro file and set the robot_description parameter -->
+    <arg default="$(find ruka_description)/urdf/dobot_macro.xacro" name="model"/>
+    <arg default="$(find ruka_description)/config/simple.rviz" name="rvizconfig"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find ruka_description)/urdf/dobot_macro.xacro"/>
+
+    <node name="table_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen"/>
+    <node args="-d $(arg rvizconfig)" name="rviz" pkg="rviz" required="true" type="rviz"/>
+</launch>
