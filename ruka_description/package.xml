@@ -11,6 +11,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roslaunch</depend>
   <depend>rviz</depend>
+  <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
   <depend>robot_description</depend>
   <depend>gazebo</depend>
