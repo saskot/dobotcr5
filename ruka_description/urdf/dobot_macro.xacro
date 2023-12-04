@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name = "cr5_robot">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:property name="prefix" value=""/>
 
-<!--params neviem ci tammaju byt-->
+<!--params neviem ci tammaju byt <xacro:include filename = "cr5_robot">-->
   <xacro:macro name="cr5_robot" params="prefix">
-      <!--<link name="dummy_link">
-      </link>-->
+      <link name="dummy_link"/>
       <link name="${prefix}base_link">
           <inertial>
               <origin
@@ -41,6 +39,11 @@
               </geometry>
           </collision>
       </link>
+
+      <joint name="${prefix}dummy_joint" type="fixed">
+          <parent link="${prefix}dummy_link" />
+          <child link="${prefix}base_link" />
+      </joint>   
 
       <link name="${prefix}Link1">
           <inertial>
@@ -313,5 +316,6 @@
           <axis xyz="0 0 1" />
           <limit lower= "-6.28" upper="6.28" effort="0" velocity="0" />
       </joint>   
+
   </xacro:macro>
 </robot>

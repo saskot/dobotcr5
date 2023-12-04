@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="gripper_macro" params="prefix">
+        <link name="${prefix}gripper">
+          <inertial>
+              <origin
+                  xyz="-8.0961E-06 0.0019103 0.028995"
+                  rpy="0 0 0" />
+              <mass value="0.90882" />
+              <inertia
+                  ixx="0.0014545"
+                  ixy="4.2968E-08"
+                  ixz="-1.8199E-07"
+                  iyy="0.001345"
+                  iyz="-6.243E-06"
+                  izz="0.002155" />
+          </inertial>
+          <visual>
+              <origin
+                  xyz="0 0 0"
+                  rpy="0 0 0" />
+              <geometry>
+                  <mesh filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
+              </geometry>
+              <material name="">
+                  <color rgba="0 0 0 1" />
+              </material>
+          </visual>
+          <collision>
+              <origin
+                  xyz="0 0 0"
+                  rpy="0 0 0" />
+              <geometry>
+                  <mesh filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
+              </geometry>
+          </collision>
+      </link>
+
+
+        <!-- Add joints, inertial properties, etc. as needed -->
+
+  </xacro:macro>
+</robot>

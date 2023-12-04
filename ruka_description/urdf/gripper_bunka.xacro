@@ -1,2 +1,20 @@
-include dobot svoj gripper create_joint aby ssa spojil dobot a gripepr
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name = "cr5_robot">
+   
+    <xacro:arg name="arm_id" default="cr5_robot" />
 
+<!-- include dobot svoj gripper create_joint aby ssa spojil dobot a gripepr -->
+
+    <xacro:include filename="$(find ruka_description)/urdf/dobot_macro.xacro"/>
+    <xacro:cr5_robot prefix=""/>
+
+    <xacro:include filename="$(find ruka_description)/urdf/gripper_macro.xacro"/>
+    <xacro:gripper_macro prefix=""/>
+
+    <joint name="dobot_gripper_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 -1.57" />
+        <parent link="Link6" />
+        <child  link="gripper" />
+    </joint>  
+
+</robot>
