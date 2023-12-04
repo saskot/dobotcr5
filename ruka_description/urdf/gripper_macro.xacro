@@ -21,7 +21,7 @@
                   xyz="0 0 0"
                   rpy="0 0 0" />
               <geometry>
-                  <mesh filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
+                  <mesh scale = "0.001 0.001 0.001" filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
               </geometry>
               <material name="">
                   <color rgba="0 0 0 1" />
@@ -32,7 +32,7 @@
                   xyz="0 0 0"
                   rpy="0 0 0" />
               <geometry>
-                  <mesh filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
+                  <mesh scale = "0.001 0.001 0.001" filename="package://ruka_description/meshes/gripper/Gripper_1.4_mod_s_vzduch_pris.STL" /> 
               </geometry>
           </collision>
       </link>

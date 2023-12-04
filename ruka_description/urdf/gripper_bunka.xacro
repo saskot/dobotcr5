@@ -3,8 +3,6 @@
    
     <xacro:arg name="arm_id" default="cr5_robot" />
 
-<!-- include dobot svoj gripper create_joint aby ssa spojil dobot a gripepr -->
-
     <xacro:include filename="$(find ruka_description)/urdf/dobot_macro.xacro"/>
     <xacro:cr5_robot prefix=""/>
 
@@ -12,7 +10,7 @@
     <xacro:gripper_macro prefix=""/>
 
     <joint name="dobot_gripper_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 -1.57" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <parent link="Link6" />
         <child  link="gripper" />
     </joint>  
