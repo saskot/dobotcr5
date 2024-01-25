@@ -1,17 +1,36 @@
+<?xml version="1.0" ?>
 <launch>
-  <!--Load urdf to param server-->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find dobot_gazebo)/urdf/cr5_robot.xacro'"/>
 
-  <!--tu si pridal fake -->
-  <!--GUI used to send fake joint values-->
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find ruka_goal)/config/gazebo_controllers.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" 
+    output="screen" args="joint_state_controller position_trajectory_controller"/>
+
+  <!-- convert joint states to TF transforms for rviz, etc 
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <param name="publish_frequency" value="100.0"/>
+  </node>
+-->
+</launch>
+
+<!--
+<launch>
+  Load urdf to param server
+  <param name="robot_description" command="$(find xacro)/xacro inorder '$(find ruka_description)/urdf/gripper_bunka.xacro'"/>
+
+
+ GUI used to send fake joint values
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="false"/>
     <rosparam param="/source_list">[cr5_robot/joint_states]</rosparam>
 
   </node>
-  <!--Publish robot state to TF-->
+  Publish robot state to TF
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
     <remap from="/joint_states" to="/cr5_robot/joint_states" />
   </node>
-</launch>
+</launch>-->
