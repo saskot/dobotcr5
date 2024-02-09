@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="wenglor_driver" type="wenglor_test" name="wenglor_test" output="screen"/>
+</launch>
