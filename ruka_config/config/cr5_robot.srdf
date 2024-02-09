@@ -10,16 +10,17 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="cr5_arm">
-        <joint name="joint1"/>
+        <chain base_link="base_link" tip_link="gripper"/>
+        <!--<joint name="joint1"/>
         <joint name="joint2"/>
         <joint name="joint3"/>
         <joint name="joint4"/>
         <joint name="joint5"/>
-        <joint name="joint6"/>
+        <joint name="joint6"/>-->
     </group>
-    <group name="gripper">
+    <!--<group name="gripper">
         <link name="gripper"/>
-    </group>
+    </group>-->
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="cr5_arm">
         <joint name="joint1" value="0"/>
@@ -30,7 +31,7 @@
         <joint name="joint6" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="gripper" parent_link="Link6" group="gripper"/>
+    <!--<end_effector name="gripper" parent_link="Link6" group="gripper"/>-->
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="dummy_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
