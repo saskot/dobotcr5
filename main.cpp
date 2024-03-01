@@ -3,7 +3,7 @@
 #include <pcl/filters/filter_indices.h> // for pcl::removeNaNFromPointCloud
 #include <pcl/filters/passthrough.h>
 #include <ros/ros.h>
-
+#include <visualization_msgs/Marker.h>
 //Standard ROS Headers
 #include <tf/transform_listener.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -38,10 +38,17 @@
 typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
+
 float nx,ny,nz;                          //Normal vector
 
-int main()
+int main(int argc, char** argv)
 {
+	ros::init(argc, argv, "pcl_region_growing");
+    ros::NodeHandle nh;
+
+    // Create a publisher for the visualization marker
+    ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+
     // Read the initial point cloud
     pcl::PCLPointCloud2::Ptr cloud(new pcl::PCLPointCloud2());
     pcl::PCDReader reader;
@@ -51,7 +58,7 @@ int main()
     pcl::PCLPointCloud2::Ptr cloud_downsampled(new pcl::PCLPointCloud2());
     pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
     sor.setInputCloud(cloud);
-    sor.setLeafSize(0.1f, 0.1f, 0.1f);
+    sor.setLeafSize(0.01f, 0.01f, 0.01f);
     sor.filter(*cloud_downsampled);
     pcl::PCDWriter writer1;
     writer1.write("test_pcd_downsampled.pcd", *cloud_downsampled, Eigen::Vector4f::Zero(), Eigen::Quaternionf::Identity(), false);
@@ -109,10 +116,13 @@ int main()
 	
 	//region grow segmentation
     pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
-    reg.setMinClusterSize(50);
+    reg.setMinClusterSize(5000); // 50
     reg.setMaxClusterSize(1000000);
     reg.setSearchMethod(tree);
-    reg.setNumberOfNeighbours(30);
+
+	//reg.setDistanceThreshold(10);
+
+    reg.setNumberOfNeighbours(30); //30
     reg.setInputCloud(cloud_region_growing);
     reg.setIndices(indices);
     reg.setInputNormals(normals);
@@ -161,7 +171,7 @@ int main()
           seg.setModelType(pcl::SACMODEL_PLANE);
           seg.setMethodType(pcl::SAC_RANSAC);
           seg.setMaxIterations(100); //plane_max_iter
-          seg.setDistanceThreshold(0.02); // plane_dist_thresh
+          seg.setDistanceThreshold(0.05); // plane_dist_thresh 0.02
           
 		  seg.setInputCloud (cluster);
           seg.segment(*inliers, *coefficients);
@@ -242,6 +252,57 @@ int main()
           single_object_normal.z = nz;
 
           object_normals.push_back(single_object_normal);
+
+
+          std::cout << "Normal vector: [ " << nx << ", "
+                                           << ny << ", "
+                                           << nz << "]"
+                                           << std::endl;
+
+          std::cout << "Cluster RPY: [ " << rx*180/M_PI << ", "
+                                         << ry*180/M_PI << ", "
+                                         << rz*180/M_PI << "]"
+                                         << std::endl;
+
+          std::cout << "Centroid: [ " << object_centroid[0] << ", "
+                                      << object_centroid[1] << ", "
+                                      << object_centroid[2] << "]"
+                                      << std::endl;
+
+          std::cout << "--------------------------------------------------" << std::endl;
+
+          uint32_t shape = visualization_msgs::Marker::SPHERE;
+          visualization_msgs::Marker marker;
+
+          marker.header.frame_id = "base_link";
+          marker.header.stamp = ros::Time(0);
+          marker.ns = "basic_shapes";
+          marker.id = currentClusterNum+1;
+          marker.type = shape;
+          marker.action = visualization_msgs::Marker::ADD;
+
+          marker.pose.position.x = object_centroid[0];
+          marker.pose.position.y = object_centroid[1];
+          marker.pose.position.z = object_centroid[2];
+
+	  	  marker.scale.x = 0.02;
+          marker.scale.y = 0.02;
+          marker.scale.z = 0.02;
+
+          marker.color.r = 0.0f;
+          marker.color.g = 0.0f;
+          marker.color.b = 1.0f;
+          marker.color.a = 1.0;
+
+          marker.lifetime = ros::Duration(40);
+          marker_pub.publish(marker);
+
+          currentClusterNum++;
+
+        
+       
+
+
 
 		}
 		}	
