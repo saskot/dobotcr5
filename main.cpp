@@ -35,6 +35,7 @@
 #include <pcl/common/centroid.h>
 #include "pcl_ros/transforms.h"
 
+#include <tf2/LinearMath/Quaternion.h>
 typedef pcl::PointXYZ PointT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 
@@ -43,8 +44,9 @@ float nx,ny,nz;                          //Normal vector
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "pcl_region_growing");
+	ros::init(argc, argv, "basic_shapes");
     ros::NodeHandle nh;
+    ros::Rate r(1);
 
     // Create a publisher for the visualization marker
     ros::Publisher marker_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
@@ -274,8 +276,9 @@ int main(int argc, char** argv)
           uint32_t shape = visualization_msgs::Marker::SPHERE;
           visualization_msgs::Marker marker;
 
-          marker.header.frame_id = "base_link";
-          marker.header.stamp = ros::Time(0);
+
+          marker.header.frame_id = "world";
+          marker.header.stamp = ros::Time::now();
           marker.ns = "basic_shapes";
           marker.id = currentClusterNum+1;
           marker.type = shape;
@@ -284,6 +287,16 @@ int main(int argc, char** argv)
           marker.pose.position.x = object_centroid[0];
           marker.pose.position.y = object_centroid[1];
           marker.pose.position.z = object_centroid[2];
+
+        //   marker.pose.position.x = 0;
+        //   marker.pose.position.y = 0;
+        //   marker.pose.position.z = 0;
+
+          marker.pose.orientation.x = 0.0;
+          marker.pose.orientation.y = 0.0;
+          marker.pose.orientation.z = 0.0;
+          marker.pose.orientation.w = 1.0;
+
 
 	  	  marker.scale.x = 0.02;
           marker.scale.y = 0.02;
@@ -294,7 +307,18 @@ int main(int argc, char** argv)
           marker.color.b = 1.0f;
           marker.color.a = 1.0;
 
-          marker.lifetime = ros::Duration(40);
+          marker.lifetime = ros::Duration();
+
+
+          while(marker_pub.getNumSubscribers() < 1)
+          {
+            if(!ros::ok())
+            {
+                return 0;
+            }
+            ROS_WARN_ONCE("vytvor subscribera");
+            sleep(1);
+          }
           marker_pub.publish(marker);
 
           currentClusterNum++;
