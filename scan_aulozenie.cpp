@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 	if (argc == 2) {
 		ip = std::string(argv[1]);
 	}
-
+	
 	//Connect to Sensor
 	std::cout << "Trying to connect to Sensor: " << ip << std::endl;
 	void* sensorHandle = Sensor3D_Connect(ip.c_str(), 5000);
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
                 int result = Sensor3D_GetVersion(readBuffer, sizeof(readBuffer));
                 std::string version(readBuffer);
                 std::cout<<"version: "<<readBuffer<<std::endl;
-
+				
 				//Read out number of pixels
                 result = Sensor3D_ReadData(sensorHandle, "GetPixelXMax", readBuffer, sizeof(readBuffer), 1000);
 				if (result != SENSOR3D_OK)
@@ -140,6 +140,34 @@ int main(int argc, char* argv[]) {
 					cleanupAndDisconnect(sensorHandle, scanBuffer);
 					return -1;
 				}
+				
+
+
+
+				//toto som si setol gain
+				command = "SetGain=50\r";
+				result = Sensor3D_WriteData(sensorHandle, command.data());
+				if (result != SENSOR3D_OK)
+				{
+					std::cerr << "Error, could not write " << command << ", result = " << result << std::endl;
+					cleanupAndDisconnect(sensorHandle, scanBuffer);
+					return -1;
+				}
+
+
+				//toto som si setol led power
+				command = "SetGain=60\r";
+				result = Sensor3D_WriteData(sensorHandle, command.data());
+				if (result != SENSOR3D_OK)
+				{
+					std::cerr << "Error, could not write " << command << ", result = " << result << std::endl;
+					cleanupAndDisconnect(sensorHandle, scanBuffer);
+					return -1;
+				}
+
+
+
+
 
 				ROI roi;
 				int number_of_points = 0;
@@ -155,42 +183,86 @@ int main(int argc, char* argv[]) {
 					else
 					{
 						std::cout <<"Point cloud read, amount of returned points: "<< number_of_points <<std::endl;
-                        pcl::PointCloud<pcl::PointXYZ> cloud;
+                        
+						pcl::PointCloud<pcl::PointXYZ> cloud;
 						
-                        for (int i = 0; i <= number_of_points; i++){
+						// cloud.width    = 2048;
+  						// cloud.height   = 2448;
+  						// cloud.is_dense = false;
+  						// cloud.resize (cloud.width * cloud.height);                        
+						
+						int nrPixels = camera_width * camera_height;
+   						cloud.width = camera_width;
+    					cloud.height = camera_height;
+    					cloud.is_dense = false;
+    					cloud.resize(nrPixels);
+						
+						
+						//for (int i = 0; i <= number_of_points; i++){
+							
+						// int pointIndex = 0;
+    					// for (int i = 0; i < camera_height; ++i) {
+        				// 	for (int j = 0; j < camera_width; ++j) {
+            			// 	// Assuming scanBuffer contains the point cloud data
+            			// 	cloud.points[pointIndex].x = scanBuffer.point[pointIndex].x;
+            			// 	cloud.points[pointIndex].y = scanBuffer.point[pointIndex].y;
+						// 	std::cout <<"2 "<< number_of_points <<std::endl;
+            			// 	cloud.points[pointIndex].z = scanBuffer.point[pointIndex].z;
+						// 	std::cout <<"1 "<< number_of_points <<std::endl;
+            			// 	++pointIndex;
+        				// 		}
+   						// 	}
+							
+						int pointIndex = 0;
+						for(int i = 0; i < camera_height * camera_width; i++){
+            				// Assuming scanBuffer contains the point cloud data
+            				cloud.points[i].x = scanBuffer.point[i].x;
+            				cloud.points[i].y = scanBuffer.point[i].y;
+							//std::cout <<"2 "<<std::endl;
+            				cloud.points[i].z = scanBuffer.point[i].z;
+							//std::cout <<"1 "<<std::endl;
+            				
+        						
+   							}
+														
+							
+							
+							
+							
 							//if (scanBuffer.point[i].x > 0)
 							//{
-								 
+							//float cloud;
 
+							//cloud[i].x = scanBuffer.point[i].x;	 
+							//cloud[i].y = scanBuffer.point[i].y;
+							//cloud[i].z = scanBuffer.point[i].z;
 
-								cloud.width    = 2048;
-  								cloud.height   = 2448;
-  								cloud.is_dense = false;
-  								cloud.resize (cloud.width * cloud.height);
 
 								//std::cout << scanBuffer.point[i].x << std::endl;
 								//break;
-								for (auto& point: cloud){
-								point.x = scanBuffer.point[i].x;
-								point.y = scanBuffer.point[i].y;
-								point.z = scanBuffer.point[i].z;
-								scanBuffer.intensity
-								//cloud.push_back(point);
-								}
-							
-								pcl::io::savePCDFileASCII ("test_pcd.pcd", cloud);
-  								std::cerr << "Saved " << cloud.size () << " data points to test_pcd.pcd." << std::endl;
-                                for (const auto& point: cloud)
-					            std::cerr << "    " << point.x << " " << point.y << " " << point.z << std::endl;
+								// for (auto& point: cloud){
+								// point.x = scanBuffer.point[i].x;
+								// std::cout <<"tusi "<<std::endl;
+								// point.y = scanBuffer.point[i].y;
+								// std::cout <<"tusi2 "<<std::endl;
+								// point.z = scanBuffer.point[i].z;
+								// std::cout <<"tusi3 "<<std::endl;
+								// //cloud.push_back(point);
+							//}
+						std::cout <<"3 "<< number_of_points <<std::endl;	
+						pcl::io::savePCDFileASCII ("test_pcd.pcd", cloud);
+						std::cerr << "Saved " << cloud.size () << " data points to test_pcd.pcd." << std::endl;
+						//for (const auto& point: cloud)
+						//std::cerr << "    " << point.x << " " << point.y << " " << point.z << std::endl;
                             //}
+						std::cout << nrScans << " Scans Acquired!" << std::endl;
+						cleanupAndDisconnect(sensorHandle, scanBuffer);
 
 
-						}
+					
 					}
 				}
-				std::cout << nrScans << " Scans Acquired!" << std::endl;
-				cleanupAndDisconnect(sensorHandle, scanBuffer);
-
+				
 			}
 		}
 	}
