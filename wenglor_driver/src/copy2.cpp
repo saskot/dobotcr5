@@ -250,7 +250,7 @@ int main(int argc, char* argv[]) {
 								// //cloud.push_back(point);
 							//}
 						std::cout <<"3 "<< number_of_points <<std::endl;	
-						pcl::io::savePCDFileASCII ("sken_s_rovinou_2.pcd", cloud);
+						pcl::io::savePCDFileASCII ("sken_rovna_plocha.pcd", cloud);
 						std::cerr << "Saved " << cloud.size () << " data points to test_pcd.pcd." << std::endl;
 						//for (const auto& point: cloud)
 						//std::cerr << "    " << point.x << " " << point.y << " " << point.z << std::endl;

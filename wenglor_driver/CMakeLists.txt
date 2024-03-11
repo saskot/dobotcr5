@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(wenglor_driver)
-#find_package(PCL 1.3 REQUIRED)
+
+find_package(PCL 1.5 REQUIRED)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -24,27 +25,23 @@ include_directories(
 # include
   Sensor3D/include
   ${catkin_INCLUDE_DIRS}
-  #${PCL_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
-
 
 set(WENGLOR_HEADER_FILES Sensor3D/include/sensor3d.h Sensor3D/include/sensor3ddefines.h)
 link_directories(Sensor3D/lib)
-#link_directories(${PCL_LIBRARY_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
 
 add_definitions(${PCL_DEFINITIONS})
 
-
 add_executable(wenglor_test src/main.cpp ${WENGLOR_HEADER_FILES})
+
+
 #add_executable(pcd_write_test /home/alex/catkin_ws/src/wenglor_driver/src/pcd_write.cpp)
 
-target_link_libraries(wenglor_test Sensor3D ${catkin_LIBRARIES})
+target_link_libraries(wenglor_test Sensor3D ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
 #target_link_libraries(pcd_write_test ${PCL_LIBRARIES})
-
-
-
-
-
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
