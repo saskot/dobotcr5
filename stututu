@@ -1,0 +1,8 @@
+pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::fromPCLPointCloud2(*cloud_downsampled, *cloud_filtered);
+
+pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+sor.setInputCloud(cloud_filtered);
+sor.setMeanK(50);
+sor.setStddevMulThresh(1.0);
+sor.filter(*cloud_filtered);
