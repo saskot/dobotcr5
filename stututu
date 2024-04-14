@@ -6,3 +6,6 @@ sor.setInputCloud(cloud_filtered);
 sor.setMeanK(50);
 sor.setStddevMulThresh(1.0);
 sor.filter(*cloud_filtered);
+
+pcl::PCDWriter writer;
+writer.write<pcl::PointXYZ>("filtered_cloud.pcd", *cloud_filtered, false);
