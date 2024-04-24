@@ -23,7 +23,7 @@
 //PCL Segmentation
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/region_growing.h>
-
+#include <pcl/point_types.h>
 //PCL other headers
 #include <pcl/surface/convex_hull.h>
 #include <pcl/search/search.h>
@@ -62,10 +62,11 @@ int main(int argc, char** argv)
     pcl::PCLPointCloud2::Ptr cloud_downsampled(new pcl::PCLPointCloud2());
     pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
     sor.setInputCloud(cloud);
-    sor.setLeafSize(1.8f, 1.8f, 1.8f); //0.01 je 1 cm
+    sor.setLeafSize(2.0f, 2.0f, 2.0f); //0.01 je 1 cm
     sor.filter(*cloud_downsampled);
     pcl::PCDWriter writer1;
     writer1.write("sken_rovna_plocha_downsampled_0_0_1.pcd", *cloud_downsampled, Eigen::Vector4f::Zero(), Eigen::Quaternionf::Identity(), false);
+  
 
 	// std::vector<int> mapping;
     // pcl::removeNaNFromPointCloud(*cloud_downsampled, *cloud_downsampled, mapping);
@@ -95,15 +96,15 @@ int main(int argc, char** argv)
     pcl::PassThrough<pcl::PointXYZ> pass;
     pass.setInputCloud(cloud_region_growing);
     pass.setFilterFieldName("x");
-    pass.setFilterLimits(/* min_x */ -450, /* max_x */450);
+    pass.setFilterLimits(/* min_x */ -550, /* max_x */250);
     pass.filter(*cloud_region_growing); // Crop along x-axis
     pass.setInputCloud(cloud_region_growing);
     pass.setFilterFieldName("y");
-    pass.setFilterLimits(/* min_y */ -150, /* max_y */ 200);
+    pass.setFilterLimits(/* min_y */ -40, /* max_y */ 150);
     pass.filter(*cloud_region_growing); // Crop along y-axis
     pass.setInputCloud(cloud_region_growing);
     pass.setFilterFieldName("z");
-    pass.setFilterLimits(/* min_z */ -3000, /* max_z */ 2200); // Adjust as needed
+    pass.setFilterLimits(/* min_z */ 2000, /* max_z */ 2142); // Adjust as needed
     pass.filter(*cloud_region_growing); // Crop along z-axis
     writer.write<pcl::PointXYZ>("sken_rovna_plocha_cropped250_250_10000.pcd", *cloud_region_growing, false);
 
@@ -115,7 +116,7 @@ int main(int argc, char** argv)
     normal_estimator.setSearchMethod(tree);
     normal_estimator.setInputCloud(cloud_region_growing);
 
-    normal_estimator.setKSearch(50);
+    normal_estimator.setKSearch(110);
     normal_estimator.compute(*normals);
 
  
@@ -124,18 +125,18 @@ int main(int argc, char** argv)
 	
 	//region grow segmentation
     pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
-    reg.setMinClusterSize(50); // 50
-    reg.setMaxClusterSize(1000000);
+    reg.setMinClusterSize(700); // 50
+    reg.setMaxClusterSize(18000);
     reg.setSearchMethod(tree);
 
 	//reg.setDistanceThreshold(10);s
 
-    reg.setNumberOfNeighbours(30); //30
+    reg.setNumberOfNeighbours(50); //70
     reg.setInputCloud(cloud_region_growing);
     reg.setIndices(indices);
     reg.setInputNormals(normals);
-    reg.setSmoothnessThreshold(3.0 / 180.0 * M_PI); //5.0 sa meni 3.0 bolo asi optm
-    reg.setCurvatureThreshold(1.0); //1.0000000000000 bolo
+    reg.setSmoothnessThreshold(2.0 / 180.0 * M_PI); 
+    reg.setCurvatureThreshold(2.5); //1.0000000000000 bolo
 
     std::vector<pcl::PointIndices> clusters;
     reg.extract(clusters);
@@ -169,7 +170,7 @@ int main(int argc, char** argv)
           PointCloudT::Ptr cluster_plane_raw(new PointCloudT);
 
 
-          //Cluster plane segmentation
+          //plane model segmentation
           //-------------------------------------
           pcl::SACSegmentation<PointT> seg;
           pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -178,11 +179,12 @@ int main(int argc, char** argv)
           seg.setOptimizeCoefficients(true);
           seg.setModelType(pcl::SACMODEL_PLANE);
           seg.setMethodType(pcl::SAC_RANSAC);
-          seg.setMaxIterations(1000); //plane_max_iter
-          seg.setDistanceThreshold(0.03); // plane_dist_thresh 0.02
+         //seg.setMaxIterations(100); //plane_max_iter
+          seg.setDistanceThreshold(0.005); // plane_dist_thresh 0.02
           
 		  seg.setInputCloud (cluster);
           seg.segment(*inliers, *coefficients);
+        //plane model
 
           //Segment the largest planar komponent from cluster
           seg.setInputCloud (cluster);
@@ -203,9 +205,13 @@ int main(int argc, char** argv)
           PointCloudT::Ptr cluster_plane(new PointCloudT);
           pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
           sor.setInputCloud (cluster_plane_raw);
-          sor.setMeanK (50);
-          sor.setStddevMulThresh (1.0);
+          sor.setMeanK (100);
+          sor.setStddevMulThresh (0.5);
           sor.filter (*cluster_plane);
+          pcl::PCDWriter writer;
+          writer.write<pcl::PointXYZ>("statistic.pcd", *cluster_plane, false);
+
+          //statistical
 
           PointCloudT::Ptr convexHull (new PointCloudT);
           pcl::ConvexHull<pcl::PointXYZ> hull;
